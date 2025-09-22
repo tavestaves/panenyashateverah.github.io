@@ -3,80 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panenyasha Teverah – Embedded Systems Portfolio</title>
+  <title>Panenyasha Teverah</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-      line-height: 1.6;
-      background-color: #f4f4f4;
-      color: #333;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
     }
-    h1, h2, h3 { color: #222; }
-    .project {
-      background: #fff;
-      padding: 15px;
-      margin: 15px 0;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+    h1 {
+      font-size: 3em;
+      margin: 0.2em 0;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
     }
-    pre {
-      background: #eee;
-      padding: 10px;
-      border-radius: 5px;
-      overflow-x: auto;
+
+    p {
+      font-size: 1.5em;
+      margin: 0.5em 0 2em;
     }
-    a { color: #007acc; text-decoration: none; }
-    a:hover { text-decoration: underline; }
+
+    .buttons a {
+      display: inline-block;
+      margin: 0.5em;
+      padding: 0.7em 1.5em;
+      font-size: 1em;
+      color: #fff;
+      background: rgba(0,0,0,0.2);
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+
+    .buttons a:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+    }
   </style>
 </head>
 <body>
 
-  <h1>Panenyasha Teverah</h1>
-  <p><strong>Embedded Systems Engineer</strong></p>
-  <p>I design PCBs and write firmware in <strong>C/C++</strong> for microcontrollers (ESP32, STM32, Arduino, PIC). This portfolio showcases my skills and projects.</p>
+  <h1>Hi, I’m Panenyasha Teverah</h1>
+  <p>Embedded Systems Engineer</p>
 
-  <h2>Skills</h2>
-  <ul>
-    <li>Embedded C/C++</li>
-    <li>PCB Design (KiCad, Altium)</li>
-    <li>Real-time systems & peripheral drivers</li>
-    <li>ESP32 / STM32 / Arduino / PIC</li>
-  </ul>
-
-  <h2>Projects</h2>
-
-  <div class="project">
-    <h3>Wireless Mine Lift Safety System</h3>
-    <p><strong>Controller:</strong> ESP32 | <strong>Firmware:</strong> C++</p>
-    <p>Interrupt-driven safety sensors, RTOS tasks.</p>
-    <pre><code>// Interrupt handler example
-void IRAM_ATTR sensorISR() {
-    liftStatus = digitalRead(SENSOR_PIN);
-    if(liftStatus == HIGH) stopLift();
-}</code></pre>
-    <p><a href="#">View Code</a> | <a href="#">View Schematic</a></p>
+  <div class="buttons">
+    <a href="#">LinkedIn</a>
+    <a href="https://github.com/tavestaves">GitHub</a>
+    <a href="mailto:your@email.com">Email</a>
   </div>
-
-  <div class="project">
-    <h3>Bluetooth LED Controller</h3>
-    <p><strong>Controller:</strong> ESP32 + SK6812 LEDs | <strong>Firmware:</strong> C++</p>
-    <p>Custom animations, mobile app control.</p>
-    <pre><code>void setColor(uint8_t r, uint8_t g, uint8_t b) {
-    for(int i=0;i<NUM_LEDS;i++) leds[i]=RgbColor(r,g,b);
-    strip.Show();
-}</code></pre>
-    <p><a href="#">View Code</a> | <a href="#">View PCB Layout</a></p>
-  </div>
-
-  <h2>Contact</h2>
-  <ul>
-    <li><a href="#">LinkedIn</a></li>
-    <li><a href="https://github.com/tavestaves">GitHub</a></li>
-    <li><a href="mailto:your@email.com">Email</a></li>
-  </ul>
 
 </body>
 </html>
