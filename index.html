@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panenyasha Teverah – Embedded Systems Portfolio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    h1, h2, h3 { color: #222; }
+    .project {
+      background: #fff;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    pre {
+      background: #eee;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    a { color: #007acc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <h1>Panenyasha Teverah</h1>
+  <p><strong>Embedded Systems Engineer</strong></p>
+  <p>I design PCBs and write firmware in <strong>C/C++</strong> for microcontrollers (ESP32, STM32, Arduino, PIC). This portfolio showcases my skills and projects.</p>
+
+  <h2>Skills</h2>
+  <ul>
+    <li>Embedded C/C++</li>
+    <li>PCB Design (KiCad, Altium)</li>
+    <li>Real-time systems & peripheral drivers</li>
+    <li>ESP32 / STM32 / Arduino / PIC</li>
+  </ul>
+
+  <h2>Projects</h2>
+
+  <div class="project">
+    <h3>Wireless Mine Lift Safety System</h3>
+    <p><strong>Controller:</strong> ESP32 | <strong>Firmware:</strong> C++</p>
+    <p>Interrupt-driven safety sensors, RTOS tasks.</p>
+    <pre><code>// Interrupt handler example
+void IRAM_ATTR sensorISR() {
+    liftStatus = digitalRead(SENSOR_PIN);
+    if(liftStatus == HIGH) stopLift();
+}</code></pre>
+    <p><a href="#">View Code</a> | <a href="#">View Schematic</a></p>
+  </div>
+
+  <div class="project">
+    <h3>Bluetooth LED Controller</h3>
+    <p><strong>Controller:</strong> ESP32 + SK6812 LEDs | <strong>Firmware:</strong> C++</p>
+    <p>Custom animations, mobile app control.</p>
+    <pre><code>void setColor(uint8_t r, uint8_t g, uint8_t b) {
+    for(int i=0;i<NUM_LEDS;i++) leds[i]=RgbColor(r,g,b);
+    strip.Show();
+}</code></pre>
+    <p><a href="#">View Code</a> | <a href="#">View PCB Layout</a></p>
+  </div>
+
+  <h2>Contact</h2>
+  <ul>
+    <li><a href="#">LinkedIn</a></li>
+    <li><a href="https://github.com/tavestaves">GitHub</a></li>
+    <li><a href="mailto:your@email.com">Email</a></li>
+  </ul>
+
+</body>
+</html>
