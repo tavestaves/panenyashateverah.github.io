@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panenyasha Teverah – Embedded Systems Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
   <style>
     body {
@@ -53,6 +55,7 @@
       color: #ff6f61;
       text-shadow: 0 0 5px #ff6f61;
     }
+
     ul { list-style-type: square; padding-left: 20px; }
 
     .projects {
@@ -60,18 +63,21 @@
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 20px;
     }
-    .project {
+
+    .project, .experience-card {
       background: #2a2a3f;
       padding: 20px;
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       border-left: 5px solid #ffa500;
       transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
     }
-    .project:hover {
+    .project:hover, .experience-card:hover {
       transform: translateY(-8px) scale(1.02);
       box-shadow: 0 8px 18px rgba(0,0,0,0.5);
     }
+
     pre {
       background: #111122;
       padding: 15px;
@@ -80,6 +86,7 @@
       color: #00ff9d;
       font-size: 0.9rem;
     }
+
     p, li { color: #dcdcdc; }
 
     .contact ul {
@@ -88,6 +95,7 @@
       flex-wrap: wrap;
       padding-left: 0;
       list-style: none;
+      justify-content: center;
     }
     .contact li a {
       display: inline-block;
@@ -100,16 +108,26 @@
       background-color: #00ff9d;
       color: #1a1a2f;
     }
-    .btn {
-      display: inline-block;
-      padding: 10px 18px;
-      background-color: #00ff9d;
-      color: #1a1a2f;
-      border-radius: 8px;
-      margin-top: 10px;
-      font-weight: 500;
+
+    .project::before, .experience-card::before {
+      content: '';
+      position: absolute;
+      top: -3px; left: -3px; right: -3px; bottom: -3px;
+      border-radius: 15px;
+      background: linear-gradient(45deg, transparent, rgba(255,165,0,0.1), transparent);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.4s;
     }
-    .btn:hover { background-color: #ff6f61; color: #fff; }
+    .project:hover::before, .experience-card:hover::before {
+      opacity: 1;
+    }
+
+    .experience-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
   </style>
 </head>
 <body>
@@ -117,42 +135,7 @@
   <h1>Panenyasha Teverah</h1>
   <p class="tagline"><strong>Embedded Systems Engineer</strong> – PCBs, Firmware & IoT</p>
 
-  <h2>Objective</h2>
-  <p>Embedded Systems Engineer skilled in C/C++ and Arduino, ESP32, and ARM controllers systems design. Experienced in PCB
-  design, sensor integration, and IoT-based systems. Strong background in low-level hardware control, real-time firmware
-  development, and field-ready embedded solutions. Passionate about building reliable, efficient tech for industrial and
-  sustainability applications.</p>
-
-  <h2>Experience</h2>
-  <h3>One More Time – Electrical Engineering Graduate Intern</h3>
-  <ul>
-    <li>Design and implement embedded hardware & software for recycling/energy recovery systems</li>
-    <li>Microcontroller programming, circuit & PCB design, sensor integration, and communication protocols</li>
-  </ul>
-
-  <h3>Finesse Construction Equipment Hire – Mechanical & Electrical Technician</h3>
-  <ul>
-    <li>Design and develop electronic systems for construction equipment</li>
-    <li>Troubleshoot & repair engines; implement preventive maintenance programs</li>
-    <li>Collaborate with maintenance & operations teams and ensure compliance with industry standards</li>
-  </ul>
-
-  <h3>Chrome West Pvt Ltd – Electronic Engineering Intern</h3>
-  <ul>
-    <li>Maintained mine hoists, pumps & electrical systems, conducted inspections and repairs</li>
-    <li>Implemented safety procedures reducing electrical incidents and energy consumption</li>
-  </ul>
-
-  <h2>Skills</h2>
-  <ul>
-    <li>Programming Languages: C, C++, Ladder Logic, Python</li>
-    <li>Embedded Systems Design (Hardware and Firmware)</li>
-    <li>Electrical schematics, diagrams & blueprints</li>
-    <li>Instrumentation & control systems (sensors, transmitters, PLC, DCS, SCADA)</li>
-    <li>Motors, generators, transformers, electrical safety protocols</li>
-    <li>Troubleshooting, problem-solving, analytical & communication skills</li>
-    <li>Microsoft Office</li>
-  </ul>
+  <p>I design PCBs and write firmware in <strong>C/C++</strong> for microcontrollers (ESP32, STM32, Arduino, PIC). This portfolio showcases my most impactful projects and experience.</p>
 
   <h2>Projects</h2>
   <div class="projects">
@@ -180,13 +163,38 @@ void IRAM_ATTR sensorISR() {
     </div>
   </div>
 
+  <h2>Skills</h2>
+  <ul>
+    <li>Embedded C/C++</li>
+    <li>PCB Design (KiCad, Altium)</li>
+    <li>Real-time systems & peripheral drivers</li>
+    <li>ESP32 / STM32 / Arduino / PIC</li>
+    <li>Instrumentation, sensors & control systems</li>
+    <li>Electrical safety & troubleshooting</li>
+  </ul>
+
+  <h2>Experience</h2>
+  <div class="experience-grid">
+    <div class="experience-card">
+      <h3>One More Time – Electrical Engineering Graduate Intern</h3>
+      <p>Designed & implemented embedded hardware/software for recycling & energy recovery. Focus on microcontroller programming, PCB design & sensor integration.</p>
+    </div>
+    <div class="experience-card">
+      <h3>Finesse Construction Equipment Hire – Technician</h3>
+      <p>Developed electronic systems for equipment, troubleshooting engines, implementing preventive maintenance & training staff.</p>
+    </div>
+    <div class="experience-card">
+      <h3>Chrome West Pvt Ltd – Electronic Engineering Intern</h3>
+      <p>Ensured optimal performance and safety of mine hoists, pumps & equipment. Developed safety procedures & reduced energy consumption.</p>
+    </div>
+  </div>
+
   <h2>Contact</h2>
   <div class="contact">
     <ul>
-      <li><a href="https://www.linkedin.com/in/panenyasha-teverah-933017262" target="_blank">LinkedIn</a></li>
-      <li><a href="https://github.com/tavestaves" target="_blank">GitHub</a></li>
+      <li><a href="https://www.linkedin.com/in/panenyasha-teverah-933017262">LinkedIn</a></li>
+      <li><a href="https://github.com/tavestaves">GitHub</a></li>
       <li><a href="mailto:mrteverah@gmail.com">Email</a></li>
-      <li><a class="btn" href="PanenyashaTeverahCV.pdf" target="_blank">Download CV</a></li>
     </ul>
   </div>
 
