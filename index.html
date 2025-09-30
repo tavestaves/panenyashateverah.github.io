@@ -166,42 +166,77 @@
   <h2>Projects</h2>
   <div class="projects">
     <div class="project">
-      <h3>Wireless Mine Lift Safety System</h3>
-      <p><strong>Controller:</strong> ESP32 | <strong>Firmware:</strong> C++</p>
-      <p>Interrupt-driven safety sensors, RTOS tasks.</p>
+      <h3>Wireless Underground Lift Management & Safety System</h3>
+      <p><strong>Controller:</strong> Arduino Nano + NRF24L01 | <strong>Firmware:</strong> C++ (Arduino)</p>
+      <p>Two-way RF comms, lift call control, and real-time environmental monitoring for underground mines.</p>
       <details>
         <summary>View Code Snippet</summary>
-        <pre><code>// Interrupt handler example
-void IRAM_ATTR sensorISR() {
-    liftStatus = digitalRead(SENSOR_PIN);
-    if(liftStatus == HIGH) stopLift();
+        <pre><code>// NRF24L01 message frame and send/receive (snippet)
+struct LiftMsg { uint8_t level; uint8_t type; uint16_t value; uint32_t ts; };
+
+RF24 radio(9,10);
+const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
+
+void setup(){ radio.begin(); radio.openWritingPipe(pipes[0]); radio.openReadingPipe(1,pipes[1]); radio.startListening(); }
+
+bool sendLiftCall(uint8_t level){
+  radio.stopListening();
+  LiftMsg msg{ level, /*type=*/1, /*value=*/0, (uint32_t)millis() };
+  bool ok = radio.write(&msg, sizeof(msg));
+  radio.startListening();
+  return ok;
+}
+
+bool readEvent(LiftMsg &msg){
+  if(!radio.available()) return false; radio.read(&msg, sizeof(msg)); return true;
 }</code></pre>
       </details>
       <p><a href="#">View Code</a> | <a href="#">View Schematic</a></p>
       <details>
         <summary>View Full Project Details</summary>
         <div class="project-details">
-          <h4>Project Explanation</h4>
-          <p>This system enhances safety in mining operations by monitoring lift mechanisms wirelessly. It integrates multiple sensors to detect overloads, misalignments, and emergency stops, ensuring real-time responses to prevent accidents. The design includes wireless communication for remote monitoring, allowing operators to oversee multiple lifts from a central station.</p>
-          
+          <h4>Abstract</h4>
+          <p>The system delivers robust underground communication and safety by wirelessly linking miners to the control room. Features include two‑way messaging, lift call/dispatch, and continuous sensing of temperature, humidity, and gas levels for rapid response in emergencies and improved operational throughput.</p>
+
+          <h4>System Architecture</h4>
+          <ul>
+            <li><strong>Master (Control Room):</strong> Receives worker locations (RFID), sensor alarms, and lift calls; schedules and dispatches lifts; displays status on LCD.</li>
+            <li><strong>Slave (Worker Unit):</strong> Handheld device with RFID tag interaction, alarm indicators (LEDs/buzzer), and request buttons; periodically reports environment via NRF24.</li>
+            <li><strong>Protocol:</strong> Lightweight framed packets over 2.4&nbsp;GHz NRF24L01 with ACK/retry; message types for LIFT_CALL, STATUS, ALERT, and HEARTBEAT.</li>
+          </ul>
+
           <h4>Microcontroller (MCU) Details</h4>
-          <p>The ESP32 microcontroller was chosen for its dual-core processing, built-in Wi-Fi and Bluetooth capabilities, and extensive GPIO pins. It handles RTOS (FreeRTOS) for multitasking, managing sensor interrupts, data logging, and wireless transmission efficiently. Key features utilized: ADC for analog sensor readings, SPI/I2C for peripheral communication, and low-power modes for battery-operated remote units.</p>
-          
+          <p>Built on Arduino Nano for compactness and low power. SPI links the NRF24L01; I2C/SPI drive LCDs; GPIOs handle RFID readers, buttons, LEDs, and a piezo buzzer. Debounced inputs and watchdog ensure reliable field operation.</p>
+
           <h4>Components Used</h4>
           <ul>
-            <li>ESP32 DevKitC board as the core MCU</li>
-            <li>Hall-effect sensors for position detection</li>
-            <li>Load cells (HX711 amplifier) for weight monitoring</li>
-            <li>Accelerometers (MPU-6050) for vibration and tilt sensing</li>
-            <li>Relay modules for emergency stop controls</li>
-            <li>LoRa modules (SX1276) for long-range wireless communication in mine environments</li>
-            <li>Power management: LiPo batteries with TP4056 chargers and buck converters</li>
-            <li>Display: OLED SSD1306 for local status indicators</li>
-            <li>Enclosures: IP67-rated for dust and water resistance</li>
+            <li>Arduino Nano (ATmega328P)</li>
+            <li>NRF24L01 RF modules for two‑way links</li>
+            <li>RFID readers/tags for location and access</li>
+            <li>Gas sensor, DHT temperature/humidity sensor</li>
+            <li>LCD displays for UI/status</li>
+            <li>LEDs and buzzer for visual/audible alerts</li>
+            <li>Voltage regulators (7805, AMS117) and bulk/decoupling capacitors</li>
           </ul>
-          
+
+          <h4>Results & Efficiency</h4>
+          <ul>
+            <li>Lift calls at multiple levels were served reliably with immediate control‑room updates.</li>
+            <li>Environmental anomalies (high temperature/humidity/gas) triggered alarms and messaging as expected.</li>
+            <li>Communication fault handling displayed clear error states on both master and worker devices and recovered automatically.</li>
+            <li>User workflows improved by replacing manual lock‑bell with automated requests and confirmations.</li>
+          </ul>
+
+          <h4>PCB & Build Notes</h4>
+          <p>Receiver/transmitter boards laid out to keep RF traces short, provide star grounding, and isolate sensor analog nodes from digital/RF return currents. Regulators sized for peripherals; electrolytic and ceramic capacitors used for stability. Assembly followed by continuity, power‑rail validation, and firmware bring‑up.</p>
+
           <h4>Prospects and Future Enhancements</h4>
-          <p>This project has strong prospects in industrial safety applications, potentially expanding to other heavy machinery like cranes or elevators. Future enhancements could include AI-based predictive maintenance using machine learning on sensor data, integration with cloud platforms for analytics, and certification for international mining standards. It could reduce downtime by 30% and improve safety compliance, opening doors to partnerships with mining companies.</p>
+          <ul>
+            <li>Mesh networking for extended coverage and redundancy underground.</li>
+            <li>Automatic lift scheduling optimization using real‑time demand.</li>
+            <li>Data logging and analytics for safety compliance and predictive maintenance.</li>
+            <li>Ruggedized enclosures and ingress protection for harsh environments.</li>
+          </ul>
         </div>
       </details>
     </div>
