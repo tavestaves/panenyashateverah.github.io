@@ -204,38 +204,181 @@ void IRAM_ATTR sensorISR() {
     </div>
 
     <div class="project">
-      <h3>Bluetooth LED Controller</h3>
-      <p><strong>Controller:</strong> ESP32 + SK6812 LEDs | <strong>Firmware:</strong> C++</p>
-      <p>Custom animations, mobile app control.</p>
-      <pre><code>void setColor(uint8_t r, uint8_t g, uint8_t b) {
-    for(int i=0;i&lt;NUM_LEDS;i++) leds[i]=RgbColor(r,g,b);
-    strip.Show();
+      <h3>ESP32 Battery Capacity Tester</h3>
+      <p><strong>Controller:</strong> ESP32 | <strong>Firmware:</strong> Arduino (PlatformIO)</p>
+      <p>Constant-current electronic load with calibrated ADC, DAC-controlled MOSFET, touch UI.</p>
+      <pre><code>const float ADC_LUT[4096] = { }; // generate yours from https://github.com/e-tinkers/esp32-adc-calibrate
+
+// defining pins
+const int led = 2;
+const int touch = 4;
+const int dac1 = 25;
+const int dac2 = 26;
+const int adc = 35;
+
+const int touchThreshold = 30;
+const int minBatteryVoltage = 2800; // voltage * 100
+
+int adcValue = 0;
+
+bool isTouched() {
+  if (touchRead(touch) &lt; touchThreshold)
+  {
+    delay(500);
+    if (touchRead(touch) &lt; touchThreshold)
+    {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  else {
+    return false;
+  }
+}
+
+bool needsReset() {
+  // checking if pin is kept touched for 3 sec
+  if (isTouched()){
+    for(unsigned int i=0;i&lt;3;i++){
+      if (!isTouched()){
+        return false;
+      }
+      delay(500);
+    }
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+void blinkLed() {
+  while (true) {
+    // blink twice
+    for(unsigned int i=0;i&lt;2;i++){
+      digitalWrite(led, HIGH);
+      delay(100);
+      digitalWrite(led, LOW);
+      delay(100);
+    }
+    if (needsReset()){
+      // resetting, blink ten times
+      Serial.println("Resetting in 5 sec ...");
+      for(unsigned int i=0;i&lt;10;i++){
+        digitalWrite(led, HIGH);
+        delay(100);
+        digitalWrite(led, LOW);
+        delay(100);
+      }
+      // wait for 5 sec then blink for 1 sec
+      delay(5000);
+      digitalWrite(led, HIGH);
+      delay(1000);
+      digitalWrite(led, LOW);
+      break;
+    }
+    delay(3000);
+  }
+}
+
+int batteryVoltage() {
+  int calibratedReading = 0;
+  // Taking 10 adc samples for stable reading
+  for(unsigned int i=0;i&lt;10;i++){
+    adcValue = analogRead(adc);
+    calibratedReading = calibratedReading + (int)ADC_LUT[adcValue];
+    delay(10);
+  }
+  int avgreading = calibratedReading/10;
+
+  // Adc value to voltage mapping multiplied by voltage divider factor
+  return (map(avgreading, 0,4095,0,3300)) * 2;
+}
+
+void testCompleted(){
+  // Job is done
+  // set dac to zero to stop drain and watch
+  dacWrite(dac1, 0);
+  dacWrite(dac2, 0);
+  Serial.println("Test Completed");
+  blinkLed();
+}
+
+void setup() 
+{
+  Serial.begin(115200);
+  pinMode (led, OUTPUT);
+  dacWrite(dac1, 0);
+  dacWrite(dac2, 0);
+  digitalWrite(led, LOW);
+}
+void loop() 
+{
+  // Wait for touch
+  Serial.println("Waiting for touch...");
+  while (!isTouched()) {
+    delay(1000);
+  }
+  digitalWrite(led, HIGH);
+
+  if (batteryVoltage() &lt;= minBatteryVoltage){
+    testCompleted();
+  }
+  else {
+    // start draining Battery and Watch
+    dacWrite(dac1, 77); // 1v to op-amp
+    dacWrite(dac2, 116); // 1.5v to analog watch
+    Serial.println("Test Started");
+    int voltage = 0;
+    while (true){
+      // Wait for Battery to drain checking every 1 sec.
+      voltage = batteryVoltage();
+      if (voltage &gt; minBatteryVoltage) {
+        Serial.print("Battery Voltage: ");
+        Serial.println((float)voltage/1000);
+        delay(1000);
+      }
+      else {
+        break;
+      }
+    }
+    testCompleted();
+  }
 }</code></pre>
-      <p><a href="#">View Code</a> | <a href="#">View PCB Layout</a></p>
+      <p><a href="#">View Code</a> | <a href="#">View Schematic</a></p>
       <details>
         <summary>View Full Project Details</summary>
         <div class="project-details">
           <h4>Project Explanation</h4>
-          <p>This controller enables dynamic LED lighting effects controllable via a Bluetooth-enabled mobile app. It supports various animation patterns, color palettes, and synchronization with music or external triggers. The system is designed for smart home applications, event lighting, or wearable tech, providing seamless user interaction and customizable visuals.</p>
+          <p>A constant-current electronic load discharges a cell while the ESP32 logs voltage via a calibrated ADC. DAC1 biases an LM358 that drives a logic-level N-MOSFET; current is sensed across a 1&nbsp;Ω shunt and kept roughly constant by the op-amp loop. A resistor divider (R1=10&nbsp;kΩ, R2=10&nbsp;kΩ) scales the battery voltage to the ADC input. Touch input is used as a single-button UI to start/stop and request reset.</p>
           
           <h4>Microcontroller (MCU) Details</h4>
-          <p>ESP32 serves as the brain, leveraging its BLE (Bluetooth Low Energy) stack for app connectivity, high-speed GPIO for LED data lines, and ample RAM for buffering complex animations. It runs on ESP-IDF framework, utilizing tasks for concurrent LED updates and Bluetooth handling without lag.</p>
+          <p>ESP32 pinout: ADC on GPIO35 (input-only), DAC1 on GPIO25 to the LM358 non-inverting input, DAC2 on GPIO26 to an external analog reference/watch, capacitive touch on GPIO4, and LED on GPIO2. Raw ADC readings are linearized with a per-code LUT generated by the esp32-adc-calibrate tool to remove slope/offset non-linearities. The firmware samples 10× with short delays, averages, maps to millivolts, and applies the divider ratio. For larger tests, FreeRTOS tasks can separate UI, sampling, and logging.</p>
           
-          <h4>Components Used</h4>
+          <h4>Electronics Notes</h4>
           <ul>
-            <li>ESP32-WROOM module for core processing and Bluetooth</li>
-            <li>SK6812 RGBW LEDs (addressable, with individual control)</li>
-            <li>Level shifters (74AHCT125) for 3.3V to 5V signal conversion</li>
-            <li>Capacitors and resistors for signal integrity and power decoupling</li>
-            <li>Power supply: 5V/3A regulator with heat sink for high LED counts</li>
-            <li>Microphone module (MAX9814) for sound-reactive modes</li>
-            <li>Buttons and potentiometers for manual controls</li>
-            <li>Custom PCB with JST connectors for modular LED strips</li>
-            <li>App integration: Flutter-based mobile app for iOS/Android</li>
+            <li>LM358 powered at 5&nbsp;V guarantees gate drive margin; choose a MOSFET with low Rds(on) at Vgs≈4.5&nbsp;V.</li>
+            <li>Place the 1&nbsp;Ω shunt in the low side; use Kelvin connections to the op-amp sense to minimize error.</li>
+            <li>Add a small RC (e.g., 100&nbsp;Ω series at the op-amp output and 10–47&nbsp;nF across sense) to stabilize the loop.</li>
+            <li>Divider R1/R2=10&nbsp;kΩ keeps source impedance low for ADC; add 100&nbsp;nF to ground at the ADC node.</li>
+            <li>Thermal: a 1&nbsp;Ω/5&nbsp;W shunt and MOSFET need heatsinking; monitor case temperature.</li>
           </ul>
           
+          <h4>KiCad</h4>
+          <p>Schematic implements ESP32-DevKit, LM358, N-MOSFET, 1&nbsp;Ω shunt, divider, TVS and reverse-polarity protection. PCB uses star ground at the shunt return, wide copper for load current, and an analog ground island for the ADC node with a single-point tie.</p>
+          
+          <h4>PlatformIO</h4>
+          <p>Environment: <code>platform = espressif32</code>, <code>board = esp32dev</code>, <code>framework = arduino</code>. Use <code>build_flags = -O2 -DCORE_DEBUG_LEVEL=1</code>. Add a task to generate/pack the LUT into a header; CSV logging at 115200&nbsp;baud for post-processing mAh/Wh.</p>
+          
           <h4>Prospects and Future Enhancements</h4>
-          <p>With growing demand for smart lighting, this project could evolve into commercial products for home automation or stage lighting. Prospects include integration with IoT ecosystems like Home Assistant, adding Wi-Fi for cloud control, or incorporating AI for adaptive lighting based on user behavior. It has potential for scalability, supporting thousands of LEDs, and could generate revenue through open-source contributions or custom commissions.</p>
+          <ul>
+            <li>Closed-loop CC with PI controller and shunt calibration; optional CV termination.</li>
+            <li>NTC-based thermal derating and MOSFET SOA monitoring.</li>
+            <li>Capacity/energy integration with SD card or BLE to mobile app.</li>
+            <li>Battery chemistry profiles and safety timers/fault states.</li>
+          </ul>
         </div>
       </details>
     </div>
