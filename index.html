@@ -169,11 +169,14 @@
       <h3>Wireless Mine Lift Safety System</h3>
       <p><strong>Controller:</strong> ESP32 | <strong>Firmware:</strong> C++</p>
       <p>Interrupt-driven safety sensors, RTOS tasks.</p>
-      <pre><code>// Interrupt handler example
+      <details>
+        <summary>View Code Snippet</summary>
+        <pre><code>// Interrupt handler example
 void IRAM_ATTR sensorISR() {
     liftStatus = digitalRead(SENSOR_PIN);
     if(liftStatus == HIGH) stopLift();
 }</code></pre>
+      </details>
       <p><a href="#">View Code</a> | <a href="#">View Schematic</a></p>
       <details>
         <summary>View Full Project Details</summary>
@@ -207,7 +210,9 @@ void IRAM_ATTR sensorISR() {
       <h3>ESP32 Battery Capacity Tester</h3>
       <p><strong>Controller:</strong> ESP32 | <strong>Firmware:</strong> Arduino (PlatformIO)</p>
       <p>Constant-current electronic load with calibrated ADC, DAC-controlled MOSFET, touch UI.</p>
-      <pre><code>const float ADC_LUT[4096] = { }; // generate yours from https://github.com/e-tinkers/esp32-adc-calibrate
+      <details>
+        <summary>View Code Snippet</summary>
+        <pre><code>const float ADC_LUT[4096] = { }; // generate yours from https://github.com/e-tinkers/esp32-adc-calibrate
 
 // defining pins
 const int led = 2;
@@ -347,6 +352,7 @@ void loop()
     testCompleted();
   }
 }</code></pre>
+      </details>
       <p><a href="#">View Code</a> | <a href="#">View Schematic</a></p>
       <details>
         <summary>View Full Project Details</summary>
